@@ -121,20 +121,33 @@ class Game {
    * @param (HTMLButtonElement) button - The clicked button element
    */
 
-  handleInteraction(target) {
-    const value = target.innerHTML;
-    //Set Btn to Disabled After Click
-    target.setAttribute("disabled", true);
-    //Check to see if phrase has letter
-    if (game.activePhrase.checkLetter(value)) {
-      //Show Letter
-      game.activePhrase.showMatchedLetter(value);
-      target.classList.add("chosen");
-      //Check For Win is True or False
-      this.gameOver(this.checkForWin());
-    } else if (!game.activePhrase.checkLetter(value)) {
-      target.classList.add("wrong");
-      this.removeLife();
+  handleInteraction(value) {
+    const overlay = document.querySelector("#overlay");
+    //This will prevent the keyboard from working if the overlay is not display none
+    if (overlay.style.display === "none") {
+      //Set Btn to Disabled After Click
+      const qwertyBtn = document.querySelectorAll(".keyrow button");
+      qwertyBtn.forEach((btn) => {
+        if (btn.innerHTML === value && game.activePhrase.checkLetter(value)) {
+          //Prevents the button from being pressed multiple times
+          if (!btn.classList.contains("chosen")) {
+            game.activePhrase.showMatchedLetter(value);
+            btn.classList.add("chosen");
+            btn.setAttribute("disabled", true);
+            this.gameOver(this.checkForWin());
+          }
+          //Checks if button pressed equals value but is not in phrase
+        } else if (
+          btn.innerHTML === value &&
+          !game.activePhrase.checkLetter(value)
+        ) {
+          if (!btn.classList.contains("wrong")) {
+            btn.classList.add("wrong");
+            btn.setAttribute("disabled", true);
+            this.removeLife();
+          }
+        }
+      });
     }
   }
 
@@ -159,39 +172,5 @@ class Game {
       heart.src = "images/liveHeart.png";
     });
     this.missed = 0;
-  }
-
-  /**
-   * Handles Physical Keyboard Presses
-   */
-
-  handleKeyboard(value) {
-    const overlay = document.querySelector("#overlay");
-    //This will prevent the keyboard from working if the overlay is not display none
-    if (overlay.style.display === "none") {
-      const qwertyBtn = document.querySelectorAll(".keyrow button");
-      //Loop through each button to see if the value pressed is in keyrow and the letter is in phrase
-      qwertyBtn.forEach((btn) => {
-        if (btn.innerHTML === value && game.activePhrase.checkLetter(value)) {
-          //Prevents the button from being pressed multiple times
-          if (!btn.classList.contains("chosen")) {
-            game.activePhrase.showMatchedLetter(value);
-            btn.classList.add("chosen");
-            btn.setAttribute("disabled", true);
-            this.gameOver(this.checkForWin());
-          }
-          //Checks if button pressed equals value but is not in phrase
-        } else if (
-          btn.innerHTML === value &&
-          !game.activePhrase.checkLetter(value)
-        ) {
-          if (!btn.classList.contains("wrong")) {
-            btn.classList.add("wrong");
-            btn.setAttribute("disabled", true);
-            this.removeLife();
-          }
-        }
-      });
-    }
   }
 }

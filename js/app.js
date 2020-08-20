@@ -23,10 +23,12 @@ btn.addEventListener("click", () => {
 //Check to see if the target is a BUTTON or not
 qwerty.addEventListener("click", (e) => {
   const target = e.target;
+  const targetHTML = e.target.innerHTML;
+  console.log(target);
   if (target.tagName !== "BUTTON") {
     return;
   } else {
-    game.handleInteraction(target);
+    game.handleInteraction(targetHTML);
   }
 });
 
@@ -34,5 +36,5 @@ qwerty.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   //Will always make input lowercase even if caps lock is on
   const value = e.key.toLowerCase();
-  game.handleKeyboard(value);
+  game.handleInteraction(value);
 });
